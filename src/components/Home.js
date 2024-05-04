@@ -6,7 +6,18 @@ const Home = () => {
 
 
   return (
-    <div>Home</div>
+    <div>
+      <div>
+        <button>Add a book</button>
+        <button>Clear books</button>
+      </div>
+      <p>Books list:</p>
+      <ul>
+        <li>ここに列挙する</li>
+      </ul>
+
+
+    </div>
   )
 }
 
