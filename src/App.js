@@ -2,6 +2,7 @@
 import './App.css';
 import { Dexie } from 'dexie'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useState } from 'react';
 
 // データベース名を指定する
 const db = new Dexie('todoApp')
@@ -17,26 +18,29 @@ db.version(1).stores({
 const { todos } = db
 
 function App() {
+  const [taskInput, setTaskInput] = useState("")
+
   // データベース内のすべてのtodosのデータを取得して配列にする(？)
   // useLiveQueryはindexedDBのデータが更新されたときに再レンダリングする
   const allItems = useLiveQuery(() => todos.toArray(), [])
 
-  console.log('=====>', allItems)
+  // console.log('=====>', allItems)
 
   const addTask = async (event) => {
     // デフォルトのリロードを防ぐ(？)
     event.preventDefault()
-    const taskField = document.querySelector('#taskInput')
-    // console.log('=====>', taskField.value)
+    // const taskField = document.querySelector('#taskInput')
+    console.log('=====>', taskInput)
 
     // addでデータの追加
     await todos.add({
-      task: taskField['value'],
+      // task: taskField['value'],
+      task: taskInput,
       completed: false,
     })
 
-    // あとでuseStateに直す
-    taskField['value'] = ''
+    // taskField['value'] = ''
+    setTaskInput("")
   }
 
   // deleteにプライマリーキーを指定して削除できる
@@ -53,11 +57,12 @@ function App() {
   // 加えて文字列の比較では大文字と小文字が区別される
   // const completedItems = todos.where('completed').equals(true).toArray()
   // filterで代用した方が楽かもしれない
-  const completedItems = allItems?.filter((item) => item.completed === true)
-  console.log(completedItems)
+  // const completedItems = allItems?.filter((item) => item.completed === true)
+  // console.log(completedItems)
 
   return (
     <div className="container">
+      <p>{taskInput}</p>
       <h3 className="teal-text center-align">Todo App</h3>
       <form className="add-item-form" onSubmit={addTask}>
         <input
@@ -65,6 +70,8 @@ function App() {
           className="itemField"
           placeholder="What do you want to do today?"
           id="taskInput"
+          value={taskInput}
+          onChange={(e) => setTaskInput(e.target.value)}
           required
         />
         <button type="submit" className="waves-effect btn teal right">
